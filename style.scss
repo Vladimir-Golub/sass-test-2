@@ -1,0 +1,132 @@
+// if() function
+
+$var: true;
+$width : 780px;
+
+.module {
+  background: if($var, orange, red);
+}
+
+// @if
+
+@mixin module($width) {
+
+  @debug "width = #{$width}";
+
+  @warn "width = #{$width}";
+
+  @if $width >= 480px and $width < 768px{
+    @media (min-width: 480px) {
+      width: 50%;
+    }
+  } @else if($width >= 768px) {
+    @media (min-width: 768px) {
+      width: 33%;
+    }
+  } @else {
+    width: 100%;
+  }
+}
+
+.module {
+  @include module(580px);
+}
+
+// @for
+
+
+$list: 10px, 20px, 30px, 40px, 50px;
+
+$colors: orange, red, blue, gray;
+
+$colors-mas: (
+  "orange": #f10,
+  "yellow": #f11,
+  "blue": #f12
+);
+
+.module {
+  @for $i from 1 through length($list) {
+    &:nth-child(#{$i}) {
+      padding: nth($list, $i);
+    }
+  }
+}
+
+// @each
+
+.btn {
+  min-width: 120px;
+  @each $color in $colors {
+    &-#{$color} {
+      background: $color;
+    }
+  }
+}
+
+.social-twitter {
+  @extend .btn, .btn-orange;
+}
+
+
+
+.btn2 {
+  min-width: 120px;
+  @each $name, $color in $colors-mas {
+    &-#{$name} {
+      background: $color;
+    }
+  }
+}
+
+
+// while
+
+$j: 3;
+
+@while $j > 0 {
+  .module:nth-child(#{$j}) {
+    countdown: $j;
+  }
+  $j: $j - 1 !global;
+}
+
+.module:nth-child(0) {
+  countdown: "BOOM !!!";
+}
+
+// function
+
+$widths: ();
+
+$grid-width: 4em;
+$gutter-width: $grid-width / 4;
+
+@function grid-width($n){
+  $cached-value: map-get($widths, $n);
+
+  @if $cached-value {
+    @debug cached;
+
+    @return $cached-value;
+  } @else {
+    @debug compute;
+
+    $result: $n * $grid-width + ($n - 1) * $gutter-width;
+    $width: map-merge($widths, ($n: $result)) !global;
+
+    @return  $result;
+  }
+}
+
+#primary {
+  width: grid-width(7);
+}
+
+#secondary {
+  width: grid-width(5);
+}
+
+#admin {
+  width: grid-width(75);
+}

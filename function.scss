@@ -1,0 +1,35 @@
+// function
+
+$widths: ();
+
+$grid-width: 4em;
+$gutter-width: $grid-width / 4;
+
+@function grid-width($n){
+  $cached-value: map-get($widths, $n);
+
+  @if $cached-value {
+    @debug cached;
+
+    @return $cached-value;
+  } @else {
+    @debug compute;
+
+    $result: $n * $grid-width + ($n - 1) * $gutter-width;
+    $widths: map-merge($widths, ($n: $result)) !global;
+
+    @return  $result;
+  }
+}
+
+#primary {
+  width: grid-width(7);
+}
+
+#secondary {
+  width: grid-width(5);
+}
+
+#admin {
+  width: grid-width(5);
+}
